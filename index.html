@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desafio Matemático</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff7e6;--card:#fff;--tx:#1d2340;--mu:#5b6384;--p:#5b3df5;--g:#17a34a;--r:#e5484d;--y:#ffb703;--bd:#e3dcc8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14172b;--card:#1f2340;--tx:#f2f3ff;--mu:#a6abd1;--p:#8b78ff;--g:#3ddc84;--r:#ff6b70;--y:#ffc94d;--bd:#33385f}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#14172b;--card:#1f2340;--tx:#f2f3ff;--mu:#a6abd1;--p:#8b78ff;--g:#3ddc84;--r:#ff6b70;--y:#ffc94d;--bd:#33385f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:"Trebuchet MS",Verdana,sans-serif;min-height:100vh}
+#app{max-width:760px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:20px;padding:20px;margin-bottom:14px}
+h1{font-size:clamp(28px,7vw,44px);margin:0 0 6px;color:var(--p)}h2{margin:0 0 10px}
+.sym{font-size:28px;letter-spacing:6px;color:var(--y)}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:14px 18px;font-weight:700}
+.go{background:var(--p);color:#fff;font-size:18px;width:100%;margin-top:12px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--tx);border:2px solid var(--bd);margin-top:10px;font-weight:600}
+.opt:hover:not(:disabled){border-color:var(--p)}.opt.ok{background:var(--g);color:#052;border-color:var(--g)}.opt.no{background:var(--r);color:#fff;border-color:var(--r)}
+input{font:inherit;width:100%;padding:14px;border-radius:14px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+.stats{display:flex;flex-wrap:wrap;gap:8px;font-size:14px}.stats span{background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:6px 10px}
+.bar{height:12px;background:var(--bd);border-radius:8px;overflow:hidden;margin:10px 0}.bar i{display:block;height:100%;background:var(--p)}
+.tag{display:inline-block;font-size:12px;background:var(--y);color:#222;border-radius:8px;padding:2px 8px;margin-right:6px}
+.fb{border-radius:14px;padding:12px;margin-top:12px;border:2px solid}.fb.ok{border-color:var(--g)}.fb.no{border-color:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd)}.me{background:rgba(91,61,245,.15);font-weight:700}
+.wrap{overflow-x:auto}svg{max-width:100%;height:auto;display:block;margin:8px auto}.mu{color:var(--mu);font-size:14px}.warn{background:var(--y);color:#222;border-radius:12px;padding:8px 12px;margin-bottom:10px;font-size:14px}
+</style></head><body><div id="app"></div>
+<script>
+// [enunciado, correta, errada1, errada2, errada3, explicação, figura]
+var fAng=function(){return '<svg width="200" viewBox="0 0 200 110"><line x1="20" y1="95" x2="180" y2="95" stroke="currentColor" stroke-width="3"/><line x1="20" y1="95" x2="84" y2="18" stroke="currentColor" stroke-width="3"/><path d="M50 95A30 30 0 0 0 39 72" fill="none" stroke="#e5484d" stroke-width="3"/><text x="58" y="85" fill="currentColor" font-size="13">50°</text></svg>'};
+var fRet=function(){return '<svg width="220" viewBox="0 0 220 130"><rect x="30" y="20" width="160" height="80" fill="#8b78ff55" stroke="currentColor" stroke-width="3"/><text x="95" y="118" fill="currentColor" font-size="14">8 cm</text><text x="195" y="65" fill="currentColor" font-size="14">5 cm</text></svg>'};
+var fBar=function(){var d=[["Maçã",8],["Banana",12],["Uva",5],["Laranja",10]],s='<svg width="300" viewBox="0 0 300 160">';d.forEach(function(e,i){var h=e[1]*10,x=20+i*70;s+='<rect x="'+x+'" y="'+(125-h)+'" width="50" height="'+h+'" fill="#ffb703"/><text x="'+(x+25)+'" y="'+(119-h)+'" text-anchor="middle" fill="currentColor" font-size="13">'+e[1]+'</text><text x="'+(x+25)+'" y="145" text-anchor="middle" fill="currentColor" font-size="12">'+e[0]+'</text>'});return s+'<line x1="10" y1="125" x2="295" y2="125" stroke="currentColor"/></svg>'};
+var fPie=function(){return '<svg width="160" viewBox="0 0 160 160"><circle cx="80" cy="80" r="70" fill="#8b78ff55" stroke="currentColor" stroke-width="2"/><path d="M80 80L150 80A70 70 0 0 0 80 10Z" fill="#ffb703" stroke="currentColor" stroke-width="2"/></svg>'};
+var BL=["Operações","Divisibilidade","Frações e decimais","Geometria básica","Ângulos","Polígonos","Medidas","Área e perímetro","Porcentagem","Estatística","Probabilidade"];
+var Q=[
+["Mariana tinha 245 figurinhas e ganhou mais 178. Com quantas ficou?","423","413","433","323","245 + 178 = 423."],
+["Uma caixa tem 12 lápis. Quantos lápis há em 15 caixas?","180","170","160","190","12 × 15 = 180."],
+["Quanto vale 2 + 3 × 4² − 5?","45","75","43","53","Potência primeiro: 4² = 16; depois 3 × 16 = 48; 2 + 48 − 5 = 45."],
+["Um piso quadrado de área 144 dm² tem lado de quantos dm? (√144)","12","14","72","16","12 × 12 = 144, então √144 = 12."],
+["Quanto é 3⁴?","81","12","64","27","3 × 3 × 3 × 3 = 81."],
+["Qual número é divisível por 3 e por 5 ao mesmo tempo?","135","125","140","152","135 termina em 5 e 1+3+5 = 9 (divisível por 3)."],
+["Qual destes números é primo?","37","39","51","57","39 = 3×13, 51 = 3×17 e 57 = 3×19. Só 37 tem apenas dois divisores."],
+["Qual número é divisível por 4?","316","322","518","714","Os dois últimos algarismos formam 16, que é divisível por 4."],
+["Dois ônibus saem juntos às 8h. Um passa a cada 6 min e outro a cada 8 min. Depois de quantos minutos saem juntos de novo?","24","12","48","14","MMC(6, 8) = 24."],
+["Duas fitas medem 24 m e 36 m. Serão cortadas em pedaços iguais, os maiores possíveis, sem sobras. Quanto mede cada pedaço?","12 m","6 m","24 m","72 m","MDC(24, 36) = 12."],
+["Qual fração é equivalente a 3/4?","6/8","4/6","9/16","6/12","Multiplicando numerador e denominador por 2: 3/4 = 6/8."],
+["Qual é a forma irredutível de 18/24?","3/4","6/8","9/12","2/3","Dividindo por 6 (MDC): 18/24 = 3/4."],
+["Ana comeu 1/2 de uma pizza e Beto comeu 1/3 da mesma pizza. Quanto comeram juntos?","5/6","2/5","1/6","3/5","1/2 + 1/3 = 3/6 + 2/6 = 5/6."],
+["Qual é a maior fração?","2/3","3/5","5/8","1/2","Em decimais: 0,667; 0,6; 0,625; 0,5. A maior é 2/3."],
+["Quanto é 2,5 + 1,75?","4,25","3,30","4,05","4,75","2,50 + 1,75 = 4,25."],
+["Duas retas de um mesmo plano que nunca se cruzam são:","paralelas","concorrentes","perpendiculares","transversais","Retas paralelas não têm ponto em comum."],
+["A parte de uma reta que tem começo, mas não tem fim, é uma:","semirreta","segmento de reta","reta inteira","ponto","A semirreta tem origem e se prolonga infinitamente em um sentido."],
+["Quantas retas passam por dois pontos distintos?","exatamente uma","duas","infinitas","nenhuma","Dois pontos distintos determinam uma única reta."],
+["Um segmento de reta possui:","dois extremos","nenhum extremo","um extremo","infinitos extremos","O segmento tem começo e fim, ou seja, dois extremos."],
+["A superfície plana de um quadro-negro lembra qual ideia geométrica?","plano","ponto","reta","semirreta","Uma superfície plana e sem espessura lembra um plano."],
+["Um ângulo de 90° é chamado de:","reto","agudo","obtuso","raso","Ângulo de 90° é ângulo reto."],
+["Um ângulo de 135° é classificado como:","obtuso","agudo","reto","raso","Está entre 90° e 180°, portanto é obtuso."],
+["Os ponteiros de um relógio marcando exatamente 3 horas formam um ângulo:","reto","agudo","obtuso","raso","Às 3h, os ponteiros formam 90°."],
+["Qual é o complemento de um ângulo de 30°?","60°","70°","150°","120°","Ângulos complementares somam 90°: 90° − 30° = 60°."],
+["O ângulo desenhado na figura é:","agudo","reto","obtuso","raso","Mede 50°, menor que 90°: é agudo.",fAng],
+["Um triângulo com os três lados medindo 5 cm é:","equilátero","isósceles","escaleno","retângulo","Três lados iguais: triângulo equilátero."],
+["Qual quadrilátero tem 4 lados iguais e 4 ângulos retos?","quadrado","retângulo","losango","trapézio","Só o quadrado reúne lados iguais e ângulos retos."],
+["Quantas diagonais tem um hexágono?","9","6","12","18","Cada vértice liga-se a 3 outros por diagonais: 6×3 ÷ 2 = 9."],
+["Quantos eixos de simetria tem um quadrado?","4","2","1","8","Dois pelos pontos médios dos lados e dois pelas diagonais."],
+["Quantos vértices tem um pentágono?","5","4","6","10","Pentágono tem 5 lados e 5 vértices."],
+["Uma trilha tem 3,5 km. Quantos metros são?","3500 m","350 m","35 m","35000 m","1 km = 1000 m; 3,5 × 1000 = 3500."],
+["Uma garrafa tem 2 L de suco. Quantos mL são?","2000 mL","200 mL","20 mL","20000 mL","1 L = 1000 mL."],
+["Um filme dura 2 h 30 min. Quantos minutos são?","150","130","230","250","2 × 60 + 30 = 150."],
+["Uma melancia tem 4500 g. Quantos kg são?","4,5 kg","45 kg","0,45 kg","450 kg","1 kg = 1000 g; 4500 ÷ 1000 = 4,5."],
+["Um cubo de 1 m³ comporta quantos litros de água?","1000 L","100 L","10 L","10000 L","1 m³ = 1000 dm³ = 1000 L."],
+["Qual é o perímetro de um quadrado de lado 7 cm?","28 cm","49 cm","14 cm","21 cm","4 × 7 = 28."],
+["Qual é a área do retângulo da figura?","40 cm²","26 cm²","13 cm²","45 cm²","Área = 8 × 5 = 40 cm².",fRet],
+["Um quadrado tem área 81 m². Quanto mede o lado?","9 m","8 m","18 m","27 m","9 × 9 = 81."],
+["Um retângulo tem perímetro 30 cm e largura 5 cm. Qual o comprimento?","10 cm","25 cm","20 cm","15 cm","2 × (c + 5) = 30 → c + 5 = 15 → c = 10."],
+["Um piso de 6 m × 4 m será coberto com cerâmica de R$ 25 o m². Qual o custo?","R$ 600","R$ 250","R$ 240","R$ 1.000","Área = 24 m²; 24 × 25 = 600."],
+["Quanto é 10% de 250?","25","2,5","50","125","10% = 1/10; 250 ÷ 10 = 25."],
+["Uma camisa de R$ 80 tem 25% de desconto. Quanto custa agora?","R$ 60","R$ 55","R$ 20","R$ 65","25% de 80 = 20; 80 − 20 = 60."],
+["Um produto de R$ 200 sofreu aumento de 15%. Qual o novo preço?","R$ 230","R$ 215","R$ 225","R$ 260","15% de 200 = 30; 200 + 30 = 230."],
+["Uma cantina tinha 50 lanches e vendeu 40. Que porcentagem foi vendida?","80%","40%","90%","20%","40/50 = 80/100 = 80%."],
+["Lia tem R$ 120 e guardou 30% na poupança. Quanto guardou?","R$ 36","R$ 30","R$ 40","R$ 90","30% de 120 = 0,3 × 120 = 36."],
+["Pelo gráfico, quantos alunos votaram no total?","35","30","25","40","8 + 12 + 5 + 10 = 35.",fBar],
+["As notas de Davi foram 6, 8, 7 e 9. Qual a média?","7,5","7","8","30","(6+8+7+9) ÷ 4 = 30 ÷ 4 = 7,5."],
+["Qual é a moda do conjunto 2, 3, 3, 5, 3, 7?","3","5","2","4","A moda é o valor que mais aparece: o 3, três vezes."],
+["Um setor ocupa 1/4 do círculo (figura). Quantos graus ele mede?","90°","45°","180°","25°","360° ÷ 4 = 90°.",fPie],
+["O gráfico de linhas é mais indicado para mostrar:","variação ao longo do tempo","partes de um todo em fatias","apenas nomes de categorias","a área de figuras","As linhas ligam pontos e mostram como um valor muda no tempo."],
+["Ao lançar um dado comum, qual a probabilidade de sair o 4?","1/6","1/4","4/6","1/2","1 resultado favorável entre 6 possíveis."],
+["Uma sacola tem 3 bolas vermelhas e 5 azuis. Qual a probabilidade de sortear uma vermelha?","3/8","3/5","5/8","1/3","3 favoráveis em 8 bolas no total."],
+["Uma moeda é lançada 2 vezes. Quantos resultados possíveis existem?","4","2","3","6","CC, CK, KC, KK: 4 resultados."],
+["Ao lançar um dado, qual a probabilidade de sair número par?","1/2","1/3","1/6","2/3","Pares: 2, 4, 6 → 3 de 6 = 1/2."],
+["Qual a probabilidade de sortear o número 7 em um dado comum?","0","1","1/6","1/7","É um evento impossível: probabilidade 0."]
+];
+var TOT=Q.length,BS=20,LV=["fácil","fácil","médio","médio","difícil"];
+var $=function(i){return document.getElementById(i)},app=$("app");
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuf(a,r){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+var S=null,db=null,ALL=[],view="",queue=Promise.resolve(),local=false,cur=null,last=null;
+var LS=function(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}return null};
+function stats(){var c=0;for(var i=0;i<S.res.length;i++)if(S.res[i]=="c")c++;return{n:S.res.length,c:c,w:S.res.length-c,pts:c*10}}
+function payload(){var s=stats();return{name:S.name,seed:S.seed,res:S.res,score:s.pts,correct:s.c,answered:s.n,upd:Date.now()}}
+function save(){var p=payload();LS("dm_state",JSON.stringify({id:S.id,p:p}));if(!db){mergeSelf(p);return}
+ queue=queue.then(function(){return db.doc("players/"+S.id).set(p)}).catch(function(){local=true})}
+function mergeSelf(p){ALL=ALL.filter(function(x){return x.id!=S.id});ALL.push(Object.assign({id:S.id},p))}
+function home(){view="home";var st=null;try{st=JSON.parse(LS("dm_state")||"null")}catch(e){}
+ app.innerHTML='<div class="card"><div class="sym">+ − × ÷ √ %</div><h1>DESAFIO MATEMÁTICO</h1><p class="mu">Quiz com '+TOT+' questões de Matemática.</p>'+
+ '<p><b>Regras:</b> cada acerto vale <b>10 pontos</b>; erros valem zero (nada é descontado). Cada questão só pode ser respondida uma vez. A cada '+BS+' questões aparece um balanço do seu desempenho. Seu progresso é salvo sozinho.</p>'+
+ (st?'<p>Bem-vindo de volta, <b>'+esc(st.p.name)+'</b>! '+st.p.answered+' questões respondidas.</p><button class="go" onclick="begin(true)">CONTINUAR JOGO</button>':'')+
+ '<input id="nm" maxlength="30" placeholder="Digite seu nome (obrigatório)" value="'+(st?"":"")+'" aria-label="Nome do aluno"><div id="er" class="mu" style="color:var(--r)"></div><button class="go" onclick="begin(false)">INICIAR JOGO</button></div>'}
+async function begin(resume){var st=null;try{st=JSON.parse(LS("dm_state")||"null")}catch(e){}
+ if(resume&&st){S={id:st.id,name:st.p.name,seed:st.p.seed,res:st.p.res}}
+ else{var n=$("nm").value.trim();if(!n){$("er").textContent="Digite seu nome para começar.";return}
+  S={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name:n,seed:Math.floor(Math.random()*1e9),res:""}}
+ app.innerHTML='<div class="card">Carregando…</div>';
+ db=null;
+ if(db){try{var d=await db.doc("players/"+S.id).get();if(d.exists&&d.data().res.length>S.res.length){S.res=d.data().res}
+   db.collection("players").onSnapshot(function(s){ALL=s.docs.map(function(x){return Object.assign({id:x.id},x.data())});if(view=="rank"||view=="final")showRank()},function(){local=true});
+  }catch(e){db=null}}
+ S.order=shuf(Q.map(function(_,i){return i}),rng(S.seed));save();next()}
+function next(){var n=S.res.length;if(n>=TOT){return final()}question()}
+function question(){view="q";var s=stats(),i=S.order[s.n],q=Q[i],r=rng(S.seed+i*7),o=shuf([0,1,2,3],r);
+ cur={i:i,o:o,done:false};var L=LV[i%5];
+ app.innerHTML=
+ (local&&db?'<div class="warn">Falha ao sincronizar. Tentando novamente na próxima resposta.</div>':"")+
+ '<div class="stats"><span>Questão <b>'+(s.n+1)+'</b>/'+TOT+'</span><span>Respondidas: <b id="sa">'+s.n+'</b></span><span>✅ <b id="sc">'+s.c+'</b></span><span>❌ <b id="sw">'+s.w+'</b></span><span>⭐ <b id="sp">'+s.pts+'</b> pts</span></div>'+
+ '<div class="bar"><i style="width:'+(s.n/TOT*100)+'%"></i></div><div class="card"><span class="tag">'+BL[Math.floor(i/5)]+'</span><span class="tag">'+L+'</span><h2 style="margin-top:12px">'+esc(q[0])+'</h2>'+(q[6]?q[6]():"")+
+ o.map(function(k,j){return'<button class="opt" id="o'+j+'" onclick="ans('+j+')">'+"ABCD"[j]+") "+esc(q[1+k])+'</button>'}).join("")+'<div id="fb"></div></div>'}
+function ans(j){if(cur.done)return;cur.done=true;var q=Q[cur.i],ok=cur.o[j]==0;
+ for(var k=0;k<4;k++){var b=$("o"+k);b.disabled=true;if(cur.o[k]==0)b.classList.add("ok");else if(k==j)b.classList.add("no")}
+ S.res+=ok?"c":"w";save();var s=stats();$("sa").textContent=s.n;$("sc").textContent=s.c;$("sw").textContent=s.w;$("sp").textContent=s.pts;
+ $("fb").innerHTML='<div class="fb '+(ok?"ok":"no")+'"><b>'+(ok?"Muito bem! Você acertou!":"Não foi dessa vez! Continue tentando!")+'</b><p>Resposta correta: <b>'+"ABCD"[cur.o.indexOf(0)]+") "+esc(q[1])+'</b></p><p>'+esc(q[5])+'</p></div><button class="go" onclick="after()">PRÓXIMA QUESTÃO</button>'}
+function after(){var n=S.res.length;if(n>=TOT)return final();if(n%BS==0){view="rank";showRank(true)}else question()}
+function rows(){var a=ALL.slice().sort(function(x,y){return y.score-x.score||y.correct-x.correct});var pos=0;
+ return a.map(function(p,i){if(i==0||p.score!=a[i-1].score||p.correct!=a[i-1].correct)pos=i+1;p.pos=pos;return p})}
+function tbl(){var a=rows();return'<div class="wrap"><table><tr><th>#</th><th>Aluno</th><th>Pontos</th><th>Acertos</th><th>Aprov.</th></tr>'+a.map(function(p){var m=p.id==S.id;
+ return'<tr class="'+(m?"me":"")+'"><td>'+(p.pos<=3?["🥇","🥈","🥉"][p.pos-1]:p.pos+"º")+'</td><td>'+esc(p.name)+(m?" (você)":"")+'</td><td>'+p.score+'</td><td>'+p.correct+'/'+p.answered+'</td><td>'+(p.answered?Math.round(p.correct/p.answered*100):0)+'%</td></tr>'}).join("")+'</table></div>'}
+function showRank(first){var s=stats();app.innerHTML='<div class="card"><h2>🏁 Balanço após '+s.n+' questões</h2><p>✅ Acertos: <b>'+s.c+'</b> · ❌ Erros: <b>'+s.w+'</b></p><p>⭐ Pontuação: <b>'+s.pts+'</b> · Aproveitamento: <b>'+Math.round(s.c/s.n*100)+'%</b></p><div class="bar"><i style="width:'+(s.n/TOT*100)+'%"></i></div><p class="mu">Faltam '+(TOT-s.n)+' questões.</p><button class="go" onclick="question()">CONTINUAR DESAFIO</button></div>'}
+function final(){view="final";var s=stats(),bs={};S.order.forEach(function(q,k){var b=Math.floor(q/5);bs[b]=bs[b]||[0,0];bs[b][1]++;if(S.res[k]=="c")bs[b][0]++});
+ mergeSelf(payload());var a=Object.keys(bs).map(function(b){return{b:b,p:bs[b][0]/bs[b][1]}}).sort(function(x,y){return y.p-x.p});
+ var me=rows().filter(function(p){return p.id==S.id})[0];
+ app.innerHTML='<div class="card"><div class="sym">🎉</div><h1>Resultado final</h1><p><b>'+esc(S.name)+'</b></p><p>Questões respondidas: <b>'+s.n+'</b> · Acertos: <b>'+s.c+'</b> · Erros: <b>'+s.w+'</b></p><p>Aproveitamento: <b>'+Math.round(s.c/s.n*100)+'%</b> · Pontuação final: <b>'+s.pts+'</b></p>'+
+ '<h2>Desempenho por conteúdo</h2>'+a.map(function(x){return'<div>'+BL[x.b]+' – '+Math.round(x.p*100)+'%<div class="bar"><i style="width:'+x.p*100+'%"></i></div></div>'}).join("")+
+ '<p>💪 Melhor desempenho: <b>'+BL[a[0].b]+'</b>. Precisa melhorar: <b>'+BL[a[a.length-1].b]+'</b>.</p></div>'}
+home();
+</script></body></html>
